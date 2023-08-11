@@ -30,7 +30,7 @@ namespace TutorialWebApp2.Pages.Courses
                 return NotFound();
             }
 
-            Course = await _context.Courses.Include(c => c.Department).FirstOrDefaultAsync(m => m.CourseID == id);
+            Course = await _context.Courses.AsNoTracking().Include(c => c.Department).FirstOrDefaultAsync(m => m.CourseID == id);
 
             if (Course == null)
             {
