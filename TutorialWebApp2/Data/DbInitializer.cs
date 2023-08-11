@@ -1,4 +1,5 @@
-﻿using TutorialWebApp2.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using TutorialWebApp2.Models;
 
 namespace TutorialWebApp2.Data
 {
@@ -6,6 +7,9 @@ namespace TutorialWebApp2.Data
     {
         public static void Initialize(SchoolContext context)
         {
+            if(!context.Database.CanConnect())
+                context.Database.Migrate();
+
             // Look for any students.
             if (context.Students.Any())
             {
