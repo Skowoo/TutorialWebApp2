@@ -11,15 +11,16 @@ namespace TutorialWebApp2.Models
     {
         public int EnrollmentID { get; set; }
 
+
         public int CourseID { get; set; }
+        public Course Course { get; set; }
+
 
         public int StudentID { get; set; }
+        public Student Student { get; set; }
+
 
         [DisplayFormat(NullDisplayText = "No grade")]
         public Grade? Grade { get; set; }
-
-        public Course Course { get; set; }
-
-        public Student Student { get; set; }
     }
 }
