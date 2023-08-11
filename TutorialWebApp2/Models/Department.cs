@@ -27,6 +27,10 @@ namespace TutorialWebApp2.Models
         public Instructor Administrator { get; set; }
 
 
+        [Timestamp] //Concurency token - https://learn.microsoft.com/en-us/aspnet/core/data/ef-rp/concurrency?view=aspnetcore-7.0&tabs=visual-studio
+        public byte[] ConcurrencyToken { get; set; }
+
+
         public ICollection<Course> Courses { get; set; }
     }
 }
