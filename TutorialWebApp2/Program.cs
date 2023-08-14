@@ -18,6 +18,11 @@ namespace TutorialWebApp2
 
             var app = builder.Build();
 
+            #region Localization (CultureInfo)
+            //Link to discussion: https://github.com/dotnet/AspNetCore.Docs/issues/4076
+            app.UseRequestLocalization("en-US");
+            #endregion
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -33,19 +38,6 @@ namespace TutorialWebApp2
                 var context = services.GetRequiredService<SchoolContext>();
                 DbInitializer.Initialize(context);
             }
-
-            #region Localization (CultureInfo)
-            //hotfix for culture discrepancy between Front and Back-end
-            //Link to discussion: https://github.com/dotnet/AspNetCore.Docs/issues/4076
-            var defaultCulture = new CultureInfo("en-US");
-            var localizationOptions = new RequestLocalizationOptions
-            {
-                DefaultRequestCulture = new RequestCulture(defaultCulture),
-                SupportedCultures = new List<CultureInfo> { defaultCulture },
-                SupportedUICultures = new List<CultureInfo> { defaultCulture }
-            };
-            app.UseRequestLocalization(localizationOptions);
-            #endregion
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
