@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TutorialWebApp2.Data;
@@ -12,33 +8,33 @@ namespace TutorialWebApp2.Pages.Departments
 {
     public class CreateModel : PageModel
     {
-        private readonly TutorialWebApp2.Data.SchoolContext _context;
+        private readonly SchoolContext _context;
 
-        public CreateModel(TutorialWebApp2.Data.SchoolContext context)
+        public CreateModel(SchoolContext context)
         {
             _context = context;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["InstructorID"] = new SelectList(_context.Instructors, "ID", "FullName");
+            ViewData["InstructorID"] = new SelectList(_context.Instructors, "ID", "FullName");
             return Page();
         }
 
         [BindProperty]
         public Department Department { get; set; }
-        
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid)
-            {
+            if (!ModelState.IsValid) 
                 return Page();
-            }
 
-            _context.Departments.Add(Department);
-            await _context.SaveChangesAsync();
+            if (await TryUpdateModelAsync(Department, "Department", s => s.Name, s => s.Budget, s => s.StartDate, s => s.Administrator))
+            {
+                _context.Departments.Add(Department);
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToPage("./Index");
         }
