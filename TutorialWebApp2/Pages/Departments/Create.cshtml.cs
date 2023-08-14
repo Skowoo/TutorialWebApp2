@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Globalization;
 using TutorialWebApp2.Data;
 using TutorialWebApp2.Models;
 
@@ -29,6 +30,10 @@ namespace TutorialWebApp2.Pages.Departments
         {
             if (!ModelState.IsValid) 
                 return Page();
+
+            Department.Budget = Decimal.Parse(Request.Form["BudgetString"].ToString()
+                .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+                .Replace(",", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
 
             if (await TryUpdateModelAsync(Department, "Department", s => s.Name, s => s.Budget, s => s.StartDate, s => s.Administrator))
             {

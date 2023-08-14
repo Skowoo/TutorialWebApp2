@@ -20,7 +20,7 @@ namespace TutorialWebApp2
 
             #region Localization (CultureInfo)
             //Link to discussion: https://github.com/dotnet/AspNetCore.Docs/issues/4076
-            app.UseRequestLocalization("en-US");
+            app.UseRequestLocalization("pl-PL");
             #endregion
 
             // Configure the HTTP request pipeline.
