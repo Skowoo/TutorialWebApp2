@@ -36,6 +36,7 @@ namespace TutorialWebApp2
 
             #region Localization (CultureInfo)
             //hotfix for culture discrepancy between Front and Back-end
+            //Link to discussion: https://github.com/dotnet/AspNetCore.Docs/issues/4076
             var defaultCulture = new CultureInfo("en-US");
             var localizationOptions = new RequestLocalizationOptions
             {
