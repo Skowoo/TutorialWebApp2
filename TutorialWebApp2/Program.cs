@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using TutorialWebApp2.Data;
 
 namespace TutorialWebApp2
@@ -32,6 +33,18 @@ namespace TutorialWebApp2
                 var context = services.GetRequiredService<SchoolContext>();
                 DbInitializer.Initialize(context);
             }
+
+            #region Localization (CultureInfo)
+            //hotfix for culture discrepancy between Front and Back-end
+            var defaultCulture = new CultureInfo("en-US");
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(defaultCulture),
+                SupportedCultures = new List<CultureInfo> { defaultCulture },
+                SupportedUICultures = new List<CultureInfo> { defaultCulture }
+            };
+            app.UseRequestLocalization(localizationOptions);
+            #endregion
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
