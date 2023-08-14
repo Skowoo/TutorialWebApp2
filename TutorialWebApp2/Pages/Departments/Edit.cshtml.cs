@@ -45,7 +45,7 @@ namespace TutorialWebApp2.Pages.Departments
 
             // Use strongly typed data rather than ViewData.
             InstructorNameSL = new SelectList(_context.Instructors,
-                "ID", "FirstMidName");
+                "ID", "FullName");
 
             return Page();
         }

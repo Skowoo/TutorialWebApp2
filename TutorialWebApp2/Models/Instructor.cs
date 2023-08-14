@@ -29,7 +29,7 @@ namespace TutorialWebApp2.Models
         [Display(Name = "Full Name")]
         public string FullName
         {
-            get { return LastName + ", " + FirstMidName; }
+            get { return  $"{FirstMidName} {LastName}"; }
         }
 
         public ICollection<Course> Courses { get; set; }
