@@ -31,9 +31,14 @@ namespace TutorialWebApp2.Pages.Departments
             if (!ModelState.IsValid) 
                 return Page();
 
-            Department.Budget = Decimal.Parse(Request.Form["BudgetString"].ToString()
+            bool budgetParsed = Decimal.TryParse(Request.Form["BudgetString"].ToString()
                 .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-                .Replace(",", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
+                .Replace(",", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), out decimal budget);
+
+            if (budgetParsed)
+                Department.Budget = budget;
+            else
+                return Page();
 
             if (await TryUpdateModelAsync(Department, "Department", s => s.Name, s => s.Budget, s => s.StartDate, s => s.Administrator))
             {
