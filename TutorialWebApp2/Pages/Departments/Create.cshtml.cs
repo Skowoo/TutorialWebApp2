@@ -11,6 +11,10 @@ namespace TutorialWebApp2.Pages.Departments
     {
         private readonly SchoolContext _context;
 
+        public SelectList AdministratorSL { get; set; }
+
+        public string budgetFeedbackString = String.Empty;
+
         public CreateModel(SchoolContext context)
         {
             _context = context;
@@ -18,7 +22,7 @@ namespace TutorialWebApp2.Pages.Departments
 
         public IActionResult OnGet()
         {
-            ViewData["InstructorID"] = new SelectList(_context.Instructors, "ID", "FullName");
+            AdministratorSL = new SelectList(_context.Instructors, "ID", "FullName");
             return Page();
         }
 
@@ -38,7 +42,12 @@ namespace TutorialWebApp2.Pages.Departments
             if (budgetParsed)
                 Department.Budget = budget;
             else
+            {
+                budgetFeedbackString = "Value not parsed. Input must consist of digits and single decimal separation sign. No currency signs.";
+                AdministratorSL = new SelectList(_context.Instructors, "ID", "FullName");
                 return Page();
+            }
+            budgetFeedbackString = String.Empty;
 
             if (await TryUpdateModelAsync(Department, "Department", s => s.Name, s => s.Budget, s => s.StartDate, s => s.Administrator))
             {
