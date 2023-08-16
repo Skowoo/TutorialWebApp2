@@ -26,8 +26,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Department.Budget" class="control-label"></label>
-                <input asp-for="Department.Budget" class="form-control" />
-                <span asp-validation-for="Department.Budget" class="text-danger"></span>
+                <input type="text" name="BudgetString" class="form-control" value="@Model.budgetString" />
+                <span class="text-danger"> @Model.budgetFeedbackString </span>
             </div>
             <div class="form-group">
                 <label asp-for="Department.StartDate" class="control-label"></label>

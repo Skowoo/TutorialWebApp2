@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,9 @@ namespace TutorialWebApp2.Pages.Departments
     {
         private readonly SchoolContext _context;
 
+        public string budgetFeedbackString = String.Empty;
+
+        public string budgetString { get; private set; }
 
         public EditModel(SchoolContext context)
         {
@@ -43,9 +47,9 @@ namespace TutorialWebApp2.Pages.Departments
                 return NotFound();
             }
 
-            // Use strongly typed data rather than ViewData.
-            InstructorNameSL = new SelectList(_context.Instructors,
-                "ID", "FullName");
+            budgetString = Department.Budget.ToString("F2", CultureInfo.CurrentCulture);
+
+            InstructorNameSL = new SelectList(_context.Instructors, "ID", "FullName");
 
             return Page();
         }
@@ -69,14 +73,26 @@ namespace TutorialWebApp2.Pages.Departments
                 return HandleDeletedDepartment();
             }
 
-            // Set ConcurrencyToken to value read in OnGetAsync
-            _context.Entry(departmentToUpdate).Property(
-                 d => d.ConcurrencyToken).OriginalValue = Department.ConcurrencyToken;
+            #region Budget parse and validation
+            bool budgetParsed = Decimal.TryParse(Request.Form["BudgetString"].ToString()
+                .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+                .Replace(",", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), out decimal budget);
 
-            if (await TryUpdateModelAsync<Department>(
-                departmentToUpdate,
-                "Department",
-                s => s.Name, s => s.StartDate, s => s.Budget, s => s.InstructorID))
+            if (budgetParsed)
+                departmentToUpdate.Budget = budget;
+            else
+            {
+                budgetFeedbackString = "Value not parsed. Input must consist of digits and single decimal separation sign. No currency signs.";
+                InstructorNameSL = new SelectList(_context.Instructors, "ID", "FullName");
+                return Page();
+            }
+            budgetFeedbackString = String.Empty;
+            #endregion
+
+            // Set ConcurrencyToken to value read in OnGetAsync
+            _context.Entry(departmentToUpdate).Property(d => d.ConcurrencyToken).OriginalValue = Department.ConcurrencyToken;
+
+            if (await TryUpdateModelAsync<Department>(departmentToUpdate, "Department", s => s.Name, s => s.StartDate, s => s.Budget, s => s.InstructorID))
             {
                 try
                 {
@@ -117,8 +133,7 @@ namespace TutorialWebApp2.Pages.Departments
         {
             // ModelState contains the posted data because of the deletion error
             // and overides the Department instance values when displaying Page().
-            ModelState.AddModelError(string.Empty,
-                "Unable to save. The department was deleted by another user.");
+            ModelState.AddModelError(string.Empty, "Unable to save. The department was deleted by another user.");
             InstructorNameSL = new SelectList(_context.Instructors, "ID", "FullName", Department.InstructorID);
             return Page();
         }
@@ -130,25 +145,20 @@ namespace TutorialWebApp2.Pages.Departments
 
             if (dbValues.Name != clientValues.Name)
             {
-                ModelState.AddModelError("Department.Name",
-                    $"Current value: {dbValues.Name}");
+                ModelState.AddModelError("Department.Name", $"Current value: {dbValues.Name}");
             }
             if (dbValues.Budget != clientValues.Budget)
             {
-                ModelState.AddModelError("Department.Budget",
-                    $"Current value: {dbValues.Budget:c}");
+                ModelState.AddModelError("Department.Budget", $"Current value: {dbValues.Budget:c}");
             }
             if (dbValues.StartDate != clientValues.StartDate)
             {
-                ModelState.AddModelError("Department.StartDate",
-                    $"Current value: {dbValues.StartDate:d}");
+                ModelState.AddModelError("Department.StartDate", $"Current value: {dbValues.StartDate:d}");
             }
             if (dbValues.InstructorID != clientValues.InstructorID)
             {
-                Instructor dbInstructor = await _context.Instructors
-                   .FindAsync(dbValues.InstructorID);
-                ModelState.AddModelError("Department.InstructorID",
-                    $"Current value: {dbInstructor?.FullName}");
+                Instructor dbInstructor = await _context.Instructors.FindAsync(dbValues.InstructorID);
+                ModelState.AddModelError("Department.InstructorID", $"Current value: {dbInstructor?.FullName}");
             }
 
             ModelState.AddModelError(string.Empty,
