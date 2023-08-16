@@ -1,0 +1,23 @@
+﻿@page
+@model TutorialWebApp2.Pages.SettingsModel
+
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<h1>Settings</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label class="control-label"> Quantity of students displayed on single page: </label>
+                <input class="form-control" value="@Model.studentsPerPage" name="studentsOnPageInput"/>              
+            </div>
+            <hr />
+            <div class="form-group">
+                <input type="submit" value="Update settings" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
